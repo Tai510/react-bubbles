@@ -1,19 +1,15 @@
 import React, { useState } from "react";
 import axiosWithAuth from "../utils/axiosWithAuth";
+import axios from 'axios';
 
 const initialState = {
-  email: '',
   username: '',
   password: '',
 }
 
 const Login = (props) => {
 
-  const [userConnect, setUserConnect] = useState({
-    email: '',
-    username: '',
-    password: '',
-  })
+  const [userConnect, setUserConnect] = useState(initialState)
 
   const handleChange = e => {
     e.preventDefault();
@@ -21,15 +17,16 @@ const Login = (props) => {
     console.log('userConnect value...', userConnect)
 }
 
-  const onSubmit = e => {
-    e.preventDefault();
-    axiosWithAuth()
-    .post('./login', userConnect)
-    .then(res => {
-      localStorage.setItem('token', res.data.payload)
-      props.history.push('bubbles');
-    })
-}
+const onSubmit = e => {
+  e.preventDefault();
+  axios
+      .post("http://localhost:5000/api/login", userConnect)
+      .then(res => {
+          localStorage.setItem("token", res.data.payload);
+          props.history.push("bubbles");
+      })
+      .catch(err => console.log(err));
+};
 
 
 
@@ -39,9 +36,18 @@ const Login = (props) => {
     <>
       <h1>Welcome to the Bubble App!</h1>
       <form onSubmit={onSubmit}>
-        <input onChange={handleChange} name='email' value={userConnect.email} placeholder='Email'></input>
-        <input onChange={handleChange} name='username' value={userConnect.username} placeholder='Username'></input>
-        <input onChange={handleChange} name='password' value={userConnect.password} placeholder='Password'></input>
+        <input type='text' 
+        onChange={handleChange} 
+        name='username' 
+        value={userConnect.username} 
+        placeholder='Username'>
+        </input>
+        <input type='password' 
+        onChange={handleChange} 
+        name='password' 
+        value={userConnect.password} 
+        placeholder='Password'>
+        </input>
         <button>Submit</button>
       </form>
     </>
